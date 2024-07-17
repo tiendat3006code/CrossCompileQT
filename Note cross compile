@@ -1,0 +1,75 @@
+For raspberry pi 4 model B:
+Require: 32 bit legacy bulleyes
+sudo apt-get install libegl1-mesa libegl1-mesa-dev mesa-common-dev libgles2-mesa libgles2-mesa-dev libgbm-dev libdrm-dev
+sudo apt-get install libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 gdbserver
+sudo apt-get build-dep libqt5webkit5
+sudo apt-get build-dep libqt5webengine-data
+sudo apt-get build-dep libqt5gui5
+sudo apt-get build-dep qt5-qmake
+sudo apt-get dist-upgrade
+sudo apt-get update
+sudo chown -R pi:pi /usr/local/qt5.15
+sudo mkdir /usr/local/qt5.15
+sudo nano /etc/apt/sources.list
+deb-src http://raspbian.raspberrypi.org/raspbian/ <stretch|buster|bullseye> main contrib non-free rpi
+which rsync
+/usr/bin/rsync
+sudo visudo
+<username> ALL=NOPASSWD:<path to rsync>
+pi ALL=NOPASSWD:/usr/bin/rsync
+sudo apt install build-essential cmake unzip pkg-config gfortran
+sudo apt build-dep qt5-qmake libqt5gui5 libqt5webengine-data libqt5webkit5 libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 gdbserver
+sudo apt install libxcb-randr0-dev libxcb-xtest0-dev libxcb-shape0-dev libxcb-xkb-dev
+Addiitional Packs
+# additional (multimedia) packages
+sudo apt install libjpeg-dev libpng-dev libtiff-dev
+sudo apt install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+sudo apt install libxvidcore-dev libx264-dev openjdk-8-jre-headless
+# audio packages
+sudo apt install libopenal-data libsndio7.0 libopenal1 libopenal-dev pulseaudio
+# bluetooth packages
+sudo apt install bluez-tools
+sudo apt install libbluetooth-dev
+# gstreamer (multimedia) packages
+sudo apt install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+sudo apt install libgstreamer1.0-dev  libgstreamer-plugins-base1.0-dev
+sudo mkdir /usr/local/qt5.15
+sudo chown -R pi:pi /usr/local/qt5.15
+
+wget https://raw.githubusercontent.com/abhiTronix/raspberry-pi-cross-compilers/master/utils/SSymlinker
+sudo chmod +x SSymlinker
+./SSymlinker -s /usr/include/arm-linux-gnueabihf/asm -d /usr/include
+./SSymlinker -s /usr/include/arm-linux-gnueabihf/gnu -d /usr/include
+./SSymlinker -s /usr/include/arm-linux-gnueabihf/bits -d /usr/include
+./SSymlinker -s /usr/include/arm-linux-gnueabihf/sys -d /usr/include
+./SSymlinker -s /usr/include/arm-linux-gnueabihf/openssl -d /usr/include
+./SSymlinker -s /usr/lib/arm-linux-gnueabihf/crtn.o -d /usr/lib/crtn.o
+./SSymlinker -s /usr/lib/arm-linux-gnueabihf/crt1.o -d /usr/lib/crt1.o
+./SSymlinker -s /usr/lib/arm-linux-gnueabihf/crti.o -d /usr/lib/crti.o
+
+For host machine: Ubuntu 22.04 LTS
+
+sudo apt update
+sudo apt dist-upgrade
+sudo apt install build-essential cmake unzip gfortran
+sudo apt install gcc git bison python gperf pkg-config gdb-multiarch wget
+sudo apt-get -y install gcc g++ gperf flex texinfo gawk bison openssl pigz libncurses-dev autoconf automake tar figlet
+
+sudo mkdir ~/rpi-qt
+sudo mkdir ~/rpi-qt/build
+sudo mkdir ~/rpi-qt/tools
+sudo mkdir ~/rpi-qt/sysroot
+sudo mkdir ~/rpi-qt/sysroot/usr
+sudo mkdir ~/rpi-qt/sysroot/opt
+sudo chown -R 1000:1000 ~/rpi-qt
+cd ~/rpi-qt
+
+sudo wget http://download.qt.io/archive/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.2.tar.xz
+sudo tar xfv qt-everywhere-src-5.15.2.tar.xz 
+cp -R qt-everywhere-src-5.15.2/qtbase/mkspecs/linux-arm-gnueabi-g++ qt-everywhere-src-5.15.2/qtbase/mkspecs/linux-arm-gnueabihf-g++
+sed -i -e 's/arm-linux-gnueabi-/arm-linux-gnueabihf-/g' qt-everywhere-src-5.15.2/qtbase/mkspecs/linux-arm-gnueabihf-g++/qmake.conf
+
+cd ~/rpi-qt/tools
+
+
+../qt-everywhere-src-5.15.0/configure -release -opengl es2  -eglfs -device linux-rasp-pi4-v3d-g++ -device-option CROSS_COMPILE=~/rpi/tools/gcc-linaro-7.4.1-2019.02-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf- -sysroot ~/rpi/sysroot -prefix /usr/local/qt5.15 -extprefix ~/rpi/qt5.15 -opensource -confirm-license -skip qtscript -skip qtwayland -skip qtwebengine -nomake tests -make libs -pkg-config -no-use-gold-linker -v -recheck -L$HOME/rpi/sysroot/usr/lib/arm-linux-gnueabihf -I$HOME/rpi/sysroot/usr/include/arm-linux-gnueabihf -qpa eglfs -no-feature-eglfs_brcm
