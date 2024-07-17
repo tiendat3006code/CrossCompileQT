@@ -242,7 +242,9 @@ Let's move into the build directory that we created earlier inside the rpi folde
 `cd ~/rpi/build`
 
 Build Qt
-`../qt-everywhere-src-5.15.0/configure -release -opengl es2  -eglfs -device linux-rasp-pi4-v3d-g++ -device-option CROSS_COMPILE=~/rpi/tools/gcc-linaro-7.4.1-2019.02-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf- -sysroot ~/rpi/sysroot -prefix /usr/local/qt5.15 -extprefix ~/rpi/qt5.15 -opensource -confirm-license -skip qtscript -skip qtwayland -skip qtwebengine -nomake tests -make libs -pkg-config -no-use-gold-linker -v -recheck -L$HOME/rpi/sysroot/usr/lib/arm-linux-gnueabihf -I$HOME/rpi/sysroot/usr/include/arm-linux-gnueabihf -qpa eglfs -no-feature-eglfs_brcm`
+```
+../qt-everywhere-src-5.15.0/configure -release -opengl es2  -eglfs -device linux-rasp-pi4-v3d-g++ -device-option CROSS_COMPILE=~/rpi/tools/gcc-linaro-7.4.1-2019.02-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf- -sysroot ~/rpi/sysroot -prefix /usr/local/qt5.15 -extprefix ~/rpi/qt5.15 -opensource -confirm-license -skip qtscript -skip qtwayland -skip qtwebengine -nomake tests -make libs -pkg-config -no-use-gold-linker -v -recheck -L$HOME/rpi/sysroot/usr/lib/arm-linux-gnueabihf -I$HOME/rpi/sysroot/usr/include/arm-linux-gnueabihf -qpa eglfs -no-feature-eglfs_brcm
+```
 
 This may take a few minutes to complete. Once it is completed you should get a summary of what has been configured. Make sure the following options appear:
 <pre><code>
