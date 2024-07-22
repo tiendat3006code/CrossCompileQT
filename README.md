@@ -79,8 +79,7 @@ sudo apt-get build-dep libqt5webkit5
 sudo apt-get install libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 gdbserver
 sudo apt-get install libegl1-mesa libegl1-mesa-dev mesa-common-dev libgles2-mesa libgles2-mesa-dev libgbm-dev libdrm-dev
 sudo apt install build-essential cmake unzip pkg-config gfortran
-sudo apt build-dep qt5-qmake libqt5gui5 libqt5webengine-data libqt5webkit5 libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 gdbserver
-sudo apt install libxcb-randr0-dev libxcb-xtest0-dev libxcb-shape0-dev libxcb-xkb-dev```
+sudo apt install libxcb-randr0-dev libxcb-xtest0-dev libxcb-shape0-dev libxcb-xkb-dev
 ```
 
 ### Step 10: Install SSymlinker
