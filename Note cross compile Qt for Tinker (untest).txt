@@ -1,0 +1,151 @@
+Qt 5.14 cross compile for Asus tinker board
+Part 1 : Make tinker board ready for compilation
+Part 2 : Ubuntu VM for Qt Compilation
+Part 3 : Qt Creator setup for build and debug project and run on target tinker board
+
+Part 1 : Make tinker board ready for compilation:
+
+Prepare microSD card for tinker board and boot-up
+Change default linaro password
+Connect board to internet and host machine and save tinker board ip-address
+Update TinkerOS : sudo apt update
+Upgrade TinkerOS : sudo apt upgrade
+Install rsync: sudo apt install rsync
+Install following packages in tinkerOS
+Enable SSH in tinkerOS
+a. Click on start menu
+b. Select Preferences
+c. Select Tinker Board Configurations
+d. Select interfaces tab
+e. Enable ssh
+Install dependency packages
+a. sudo apt-get install qt5-qmake libqt5gui5 weston
+b. sudo apt-get install libudev-dev libinput-dev libmtdev-dev libjpeg-dev libfontconfig1-dev
+c. sudo apt-get install libssl-dev libdbus-1-dev libglib2.0-dev libegl1-mesa-dev libgbm-dev libgles2-mesa-dev mesa-common-dev
+d. sudo apt-get install libvpx-dev libsrtp0-dev libsnappy-dev libnss3-dev
+e. sudo apt-get install "^libxcb.*"
+f. sudo apt-get install libfreetype6-dev libicu-dev libsqlite3-dev libxslt1-dev libavformat-dev libswscale-dev
+g. sudo apt-get install libx11-dev libglib2.0-dev
+h. sudo apt-get install libasound2-dev libpulse-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-alsa
+i. sudo apt-get install freetds-dev libsqlite0-dev libpq-dev libiodbc2-dev firebird-dev libjpeg-dev libgst-dev libxext-dev libxcb1 libxcb1-dev libx11-xcb1
+j. sudo apt-get install libxcb-sync1 libxcb-sync-dev libxcb-render-util0 libxcb-render-util0-dev libxcb-xfixes0-dev libxrender-dev libxcb-shape0-dev libxcb-randr0-dev
+k. sudo apt-get install libxcb-glx0-dev libxi-dev libdrm-dev libssl-dev libxcb-xinerama0 libxcb-xinerama0-dev
+l. sudo apt-get install libssl-dev libxcursor-dev libxcomposite-dev libxdamage-dev libfontconfig1-dev
+m. sudo apt-get install libxss-dev libpci-dev libcap-dev libsrtp0-dev libxrandr-dev libnss3-dev libdirectfb-dev libaudio-dev
+Create destination directory for Qt5
+a. sudo mkdir /usr/local/qt5
+b. sudo chown linaro:linaro /usr/local/qt5
+Give root password
+a. sudo passwd root
+Reboot
+a. sudo reboot
+Part 2: Ubuntu VM for Qt Compilation
+run virtualBox and setup ubuntu 20.04 give maximum resources as you can and set username as dev
+update ubuntu and install compile components
+a. sudo apt-get update
+b. sudo apt-get upgrade
+c. sudo apt-get install gcc git bison python gpeft pkg-config build-essential
+d. sudo apt-get libclang-dev
+Make directory for Qt cross compile for tinker board
+a. mkdir /opt/qt5tinker
+b. chown dev:dev /opt/qt5tinker
+c. cd /opt/qt5tinker
+Download linaro toolchain, if you have already downloaded copy toolchain at directory
+a. Search on google : linaro toolchain binaries by time of writing this document link is https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf.tar.xz
+b. You can get it by wget https://releases.linaro.org/components/toolchain/…Above url
+c. This file gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf.tar.xz is already presented alongside this document
+Untar linaro toolchain
+a. tar xf gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf.tar.xz
+Export path of linaro tool chain
+a. export PATH=$PATH: /opt/qt5tinker/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin
+Update bashrc add export command at the end of bashrc file
+a. nano ~/.bashrc
+b. go to last line and paste : export PATH=$PATH: /opt/qt5tinker/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin
+c. save and exit
+Download qt official release source code
+a. Search on google : download qt official release for qt5.14 current link is : https://download.qt.io/archive/qt/5.14/5.14.0/single/qt-everywhere-src-5.14.0.tar.xz
+b. wget https://download.qt.io/archive/qt/5.14/5.14.0/single/qt-everywhere-src-5.14.0.tar.xz
+Untar qt source code
+a. tar xf qt-everywhere-src-5.14.0.tar.xz
+Update tinker board config file
+a. nano /opt/qt5tinker/qt-everywhere-src-5.14.0/qtbase/mkspecs/devices/linux-tinkerboard-g++/qmake.conf
+b. add DISTRO_OPTS += deb-multi-arch to this file
+c. save and exit
+Make sysroot directory
+a. mkdir /opt/qt5tinker/sysroot
+b. chown dev:dev /opt/qt5tinker/sysroot
+Make sure tinker-board and pc are connected and you can ping each other
+a. ping tinkerboardIP
+Note : tinkerboardIP is ip address of eth0 in tinkerboard
+Use rsync to sync tinker board /lib directory with sysroot directory
+a. rsync -avz linaro@tinkerboardIP:/lib sysroot
+b. accept SHA256 fingerprint : type yes
+c. type linaro password you have setted at part 1 of this tutorial
+Use rsync to sync tinker board /usr/lib directory with sysroot directory
+a. rsync -avz linaro@tinkerboardIP:/usr/lib sysroot/usr
+b. rsync -avz linaro@tinkerboardIP:/usr/include sysroot/usr
+Make all symlinks relative:
+a. cd /opt/qt5tinker
+b. wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py
+c. chmod +x sysroot-relativelinks.py
+d. ./sysroot-relativelinks.py sysroot
+Make build directory
+a. cd /opt/qt5tinker
+b. mkdir qt5build
+c. cd qt5build
+d. ../qt-everywhere-src-5.14.0/configure -release -opengl es2 -nomake examples -nomake tests -opensource -confirm-license -v -device tinkerboard -device-option CROSS_COMPILE=/opt/qt5tinker/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf- -sysroot /opt/qt5tinker/sysroot -prefix /usr/local/qt5
+Qt5.14 is about to compile after a while you should see results like below image which show components that are available and ready to compile by (yes/no) item.
+Make and install
+a. make -j4
+Note: this takes long time depend on the system resources, 4 is number of CPU cores.
+b. make install
+Use rsync to sync /opt/qt5tinker/sysroot/usr/local with tinker board /usr/local
+a. rsync -avz /opt/qt5tinker/sysroot/usr/local linaro@tinkerboardIP:/usr/local
+b. type linaro pass and enter
+Part 3 : Qt Creator setup for build and debug project and run on target tinker board
+
+under Tools->Options->Kits add new kit
+set name : tinker
+set Device type : Generic Linux Device
+under Tools->Options->kits->QtVesrions add by path = /opt/qt5tinker/sysroot/usr/local/qt5/bin/qmake
+under Tools->Options->Kits->Compilers
+a. add->GCC->C
+b. name gcc_tinker
+c. browse to : /opt/qt5tinker/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc
+d. set ABI to : custom,arm,linux,generic,elf,32bit
+under Tools->Options->Kits->Compilers
+a. add->GCC->C++
+b. name g++_tinker
+c. browse to : /opt/qt5tinker/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++
+d. set ABI to : custom,arm,linux,generic,elf,32bit
+under Tools->Options->Kits
+a. select tinker
+b. under compiler select for c select GCC_Tinker and for c++ select G++_Tinker
+c. set Qt version : At 5.14 (tinker)
+under Tools->Options->Devices
+a. add
+b. Generic Linux Device
+c. Set name : Tinker board
+d. Set ip address of tinker board and user name
+e. Next next finished
+f. Under type specific set authentication type to default
+Go to kits and set device for tinker kit to Tinker Board
+For Debug
+a. on host PC : sudo apt-get install gdb-multiarch
+b. on tinker board : sudo apt-get install gdbserver
+under Tools->Options->Kits->Debugger
+a. add debugger and set name tinker debugger
+b. set path to : /usr/bin/gdb-multiarch
+c. under kits->tinker set tinker debugger as debugger
+For each project set environment variables as follow
+a. In Qt Creator click on Projects and choose run under Build & run panel
+b. Click on details of run Environment add click on Add
+c. Add following variable to system environment as follow
+d. {DISPLAY, :0.0} , {QT_QPA_PLATFORMTHEME, qt5ct}, {XAUTHORITY, /home/linaro/.Xauthority}, {XDG_SESSION_TYPE, x11}
+
+
+// QT Wayland on Tinker Board
+https://www.qt.io/blog/2017/05/03/qt-git-tinkerboard-wayland
+
+// Yocto Qt5 Tinker
+https://github.com/spedagadi/tinkerboard-yocto-qt5-eglfs.git
