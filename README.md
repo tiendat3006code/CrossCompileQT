@@ -184,10 +184,14 @@ cd ~/rpi-qt
 
 ### Step 5: Download Qt source
 Run the following line to download the source files:
-`sudo wget http://download.qt.io/archive/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.0.tar.xz`
+```
+sudo wget http://download.qt.io/archive/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.2.tar.xz
+```
 
 Extract the downloaded tar file with the following command:
-`sudo tar xfv qt-everywhere-src-5.15.2.tar.xz `
+```
+sudo tar xfv qt-everywhere-src-5.15.2.tar.xz
+```
 
 ### Step 6: Configure Qt source
 We need to slightly modify the a mkspec file within the source files to allow us to use our cross compiler. We will copy an existing directory within the source files, and modify the name of the directory and the 
