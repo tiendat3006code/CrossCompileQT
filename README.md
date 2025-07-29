@@ -172,13 +172,13 @@ Setup directory for cross compile
 >sysroot: RPI libs directory
 
 ```
-sudo mkdir ~/rpi-qt
-sudo mkdir ~/rpi-qt/build
-sudo mkdir ~/rpi-qt/tools
-sudo mkdir ~/rpi-qt/sysroot
-sudo mkdir ~/rpi-qt/sysroot/usr
-sudo mkdir ~/rpi-qt/sysroot/opt
-sudo chown -R 1000:1000 ~/rpi-qt
+sudo mkdir ~/rpi
+sudo mkdir ~/rpi/build
+sudo mkdir ~/rpi/tools
+sudo mkdir ~/rpi/sysroot
+sudo mkdir ~/rpi/sysroot/usr
+sudo mkdir ~/rpi/sysroot/opt
+sudo chown -R 1000:1000 ~/rpi
 cd ~/rpi-qt
 ```
 
@@ -199,7 +199,7 @@ contents of the qmake.conf file within that directory to follow the name of our 
 
 To do this, run the following two command:
 ```
-cp -R qt-everywhere-src-5.15.0/qtbase/mkspecs/linux-arm-gnueabi-g++ qt-everywhere-src-5.15.2/qtbase/mkspecs/linux-arm-gnueabihf-g++
+cp -R qt-everywhere-src-5.15.2/qtbase/mkspecs/linux-arm-gnueabi-g++ qt-everywhere-src-5.15.2/qtbase/mkspecs/linux-arm-gnueabihf-g++
 	
 sed -i -e 's/arm-linux-gnueabi-/arm-linux-gnueabihf-/g' qt-everywhere-src-5.15.2/qtbase/mkspecs/linux-arm-gnueabihf-g++/qmake.conf
 
